@@ -110,21 +110,18 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         int x = 0;
         // Build Data Source Factory, Dash Media Source, and Prepare player using videoSource
         public void preparePlayer(Uri link){
-            x++;
-            Log.i("asghar",x+" s");
-            if(x == 1) {
-                uri = link;
-                dataSourceFactory = buildDataSourceFactory(bandwidthMeter);
-                ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
+            uri = link;
+            dataSourceFactory = buildDataSourceFactory(bandwidthMeter);
+            ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
 
-                videoSource = new ExtractorMediaSource(uri,
-                        dataSourceFactory, extractorsFactory, mainHandler, null);
+            videoSource = new ExtractorMediaSource(uri,
+                    dataSourceFactory, extractorsFactory, mainHandler, null);
 
-                LoopingMediaSource loopingSource = new LoopingMediaSource(videoSource);
+            LoopingMediaSource loopingSource = new LoopingMediaSource(videoSource);
 
 //            videoSource = new DashMediaSource(uri,buildDataSourceFactory(null),new DefaultDashChunkSource.Factory(dataSourceFactory),mainHandler,null);
-                player.prepare(loopingSource);
-            }
+            player.prepare(loopingSource);
+
         }
 
         // Build Data Source Factory using DefaultBandwidthMeter and HttpDataSource.Factory
