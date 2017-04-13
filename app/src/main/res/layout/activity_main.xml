@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" tools:context="skings.basicsofpapion.MainActivity">
+
+    <!--<RelativeLayout-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content">-->
+        <!--&lt;!&ndash;<include layout="@layout/card_image_post"/>&ndash;&gt;-->
+        <!--&lt;!&ndash;<include android:layout="@layout/posts_recycler_container"/>&ndash;&gt;-->
+        <!--<include layout="@layout/card_video_post"/>-->
+    <!--</RelativeLayout>-->
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <android.support.v7.widget.RecyclerView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/posts_container">
+
+        </android.support.v7.widget.RecyclerView>
+    </RelativeLayout>
+    <TextView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@android:color/white"
+        android:id="@+id/text"/>
+
+</android.support.constraint.ConstraintLayout>
