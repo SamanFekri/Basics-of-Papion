@@ -17,8 +17,9 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private List<Post> posts;
-    private RecyclerView.Adapter adapter;
+    private PostsAdapter adapter;
     private LinearLayoutManager llm;
+    int oldItem=0,newItem=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,23 +32,35 @@ public class MainActivity extends AppCompatActivity {
 
         posts = new ArrayList<>();
 
-        for(int i = 0; i < 10; i++){
+        for(int i = 0; i < 20; i++){
             if(i % 2 == 0){
                 posts.add(new Post(0,"https://www.tarafdari.com/sites/default/files/styles/slider/public/contents/user22475/news/c9sn4txxgaarnvy.jpg?itok=Ma4LP9Jg"));
             }else {
+
                 posts.add(new Post(1,"https://www.tarafdari.com/sites/default/files/contents/user160399/video/bastian-subbed.mp4"));
             }
         }
 
         adapter = new PostsAdapter(posts);
+
         posts_view.setAdapter(adapter);
         adapter.notifyDataSetChanged();
+
 
         posts_view.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 textView.setText(""+llm.findFirstCompletelyVisibleItemPosition());
+//                Log.i("salam",""+adapter.getItemViewType(llm.findFirstCompletelyVisibleItemPosition()));
+                newItem=llm.findFirstVisibleItemPosition();
+                if (oldItem!=newItem){
+                    Log.i("exoppp","releasing");
+                    adapter.bindViewHolder(recyclerView.findViewHolderForAdapterPosition(newItem),newItem);
+//                    adapter.release();
+                }
+                oldItem=newItem;
+//                adapter.release();
             }
         });
 

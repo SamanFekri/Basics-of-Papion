@@ -1,6 +1,5 @@
 package skings.basicsofpapion;
 
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
@@ -11,24 +10,18 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.DefaultLoadControl;
-import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.LoopingMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
-import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
@@ -45,6 +38,17 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private List<Post> postsList;
     private int currentPlaying = -1;
+    private String userAgent;
+    private Handler mainHandler;
+    private TrackSelection.Factory videoTrackSelectionFactory;
+    private TrackSelector trackSelector;
+    private LoadControl loadControl;
+    private final DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
+    private SimpleExoPlayer player;
+    private Uri uri;
+    private View view;
+    private DataSource.Factory dataSourceFactory;
+    private MediaSource videoSource;
 
     public class ImageViewHolder extends RecyclerView.ViewHolder {
         public SimpleDraweeView mainImage;
@@ -53,10 +57,6 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             super(view);
             mainImage = (SimpleDraweeView) view.findViewById(R.id.image_post_view);
 
-            /*
-            title = (TextView) view.findViewById(R.id.title);
-            genre = (TextView) view.findViewById(R.id.genre);
-            year = (TextView) view.findViewById(R.id.year);*/
         }
     }
 
@@ -80,15 +80,14 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             this.view = view;
 
             mainVideo = (SimpleExoPlayerView) view.findViewById(R.id.video_post_view);
-            userAgent = Util.getUserAgent(view.getContext(),"Basic of papion");
-            createPlayer();
-            attachPlayerView();
+//            userAgent = Util.getUserAgent(view.getContext(),"Basic of papion");
+//            createPlayer();
+//            attachPlayerView();
 
+        }
 
-            /*
-            title = (TextView) view.findViewById(R.id.title);
-            genre = (TextView) view.findViewById(R.id.genre);
-            year = (TextView) view.findViewById(R.id.year);*/
+        public View getView() {
+            return view;
         }
 
         public void preparePlayer(String url){
@@ -135,9 +134,14 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     }
 
-
     public PostsAdapter(List<Post> postsList) {
+
         this.postsList = postsList;
+        mainHandler = new Handler();
+        videoTrackSelectionFactory = new AdaptiveTrackSelection.Factory(bandwidthMeter);
+        trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
+        loadControl = new DefaultLoadControl();
+
     }
 
     @Override
@@ -151,10 +155,12 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             case 1:
                 itemView =  LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.card_video_post, parent, false);
+                Log.i("creating",""+viewType);
                 return new VideoViewHolder(itemView);
             default:
                 itemView =  LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.card_image_post, parent, false);
+                Log.i("creating",""+viewType);
                 return new ImageViewHolder(itemView);
         }
     }
@@ -167,26 +173,44 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         Post post = postsList.get(position);
+        Log.i("bindbind",""+position);
+
         switch (post.getType()){
             case 0:
                 ((ImageViewHolder) holder).mainImage.setImageURI(post.getUri());
                 break;
             case 1:
-                ((VideoViewHolder) holder).preparePlayer(post.getUri());
+                view=((VideoViewHolder)holder).getView();
+//                ((VideoViewHolder) holder).preparePlayer(post.getUri());
+                userAgent = Util.getUserAgent(view.getContext(),"Basic of papion");
+//                if (player!=null){
+//                    player.release();
+//                }
+                if (player!=null){
+                    player.stop();
+                }
+
+                player = ExoPlayerFactory.newSimpleInstance(view.getContext(),trackSelector,loadControl);
+                uri = post.getUri();
+                dataSourceFactory =
+                new DefaultDataSourceFactory(view.getContext(), bandwidthMeter,new DefaultHttpDataSourceFactory(userAgent, bandwidthMeter));
+                ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
+
+                videoSource = new ExtractorMediaSource(uri,
+                        dataSourceFactory, extractorsFactory, mainHandler, null);
+
+                LoopingMediaSource loopingSource = new LoopingMediaSource(videoSource);
+
+//            videoSource = new DashMediaSource(uri,buildDataSourceFactory(null),new DefaultDashChunkSource.Factory(dataSourceFactory),mainHandler,null);
+                player.prepare(loopingSource);
+                ((VideoViewHolder) holder).mainVideo.setPlayer(player);
                 break;
         }
     }
-
-//    @Override
-//    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-//        /*Movie movie = moviesList.get(position);
-//        holder.title.setText(movie.getTitle());
-//        holder.genre.setText(movie.getGenre());
-//        holder.year.setText(movie.getYear());*/
-//    }
 
     @Override
     public int getItemCount() {
         return postsList.size();
     }
+
 }
