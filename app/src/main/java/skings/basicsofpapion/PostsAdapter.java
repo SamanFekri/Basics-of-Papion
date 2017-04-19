@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -47,6 +48,7 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private SimpleExoPlayer player;
     private Uri uri;
     private View view;
+    private boolean flag=false;
     private DataSource.Factory dataSourceFactory;
     private MediaSource videoSource;
 
@@ -63,17 +65,7 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public class VideoViewHolder extends RecyclerView.ViewHolder {
         private View view;
         private SimpleExoPlayerView mainVideo;
-        private SimpleExoPlayer player;
-        public TextView mTextView;
-        private String userAgent;
-        private Handler mainHandler;
-        private TrackSelection.Factory videoTrackSelectionFactory;
-        private TrackSelector trackSelector;
-        private LoadControl loadControl;
-        private DataSource.Factory dataSourceFactory;
-        private MediaSource videoSource;
-        private Uri uri;
-        private final DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
+
 
         public VideoViewHolder(View view) {
             super(view);
@@ -90,21 +82,21 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             return view;
         }
 
-        public void preparePlayer(String url){
-//            player.setVideoSource(url);
-        }
+//        public void preparePlayer(String url){
+////            player.setVideoSource(url);
+//        }
 //         Create TrackSelection Factory, Track Selector, Handler, Load Control, and ExoPlayer Instance
-        public void createPlayer(){
-            mainHandler = new Handler();
-            videoTrackSelectionFactory = new AdaptiveTrackSelection.Factory(bandwidthMeter);
-            trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
-            loadControl = new DefaultLoadControl();
-            player = ExoPlayerFactory.newSimpleInstance(view.getContext(),trackSelector,loadControl);
-        }
+//        public void createPlayer(){
+//            mainHandler = new Handler();
+//            videoTrackSelectionFactory = new AdaptiveTrackSelection.Factory(bandwidthMeter);
+//            trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
+//            loadControl = new DefaultLoadControl();
+//            player = ExoPlayerFactory.newSimpleInstance(view.getContext(),trackSelector,loadControl);
+//        }
 
-        public void attachPlayerView(){
-            mainVideo.setPlayer(player);
-        }
+//        public void attachPlayerView(){
+//            mainVideo.setPlayer(player);
+//        }
 
         int x = 0;
         // Build Data Source Factory, Dash Media Source, and Prepare player using videoSource
@@ -183,9 +175,7 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 view=((VideoViewHolder)holder).getView();
 //                ((VideoViewHolder) holder).preparePlayer(post.getUri());
                 userAgent = Util.getUserAgent(view.getContext(),"Basic of papion");
-//                if (player!=null){
-//                    player.release();
-//                }
+
                 if (player!=null){
                     player.stop();
                 }
@@ -202,7 +192,10 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 LoopingMediaSource loopingSource = new LoopingMediaSource(videoSource);
 
 //            videoSource = new DashMediaSource(uri,buildDataSourceFactory(null),new DefaultDashChunkSource.Factory(dataSourceFactory),mainHandler,null);
+                player.setVideoTextureView(new TextureView(view.getContext()));
                 player.prepare(loopingSource);
+
+                Log.i("surfacetex",""+((VideoViewHolder) holder).mainVideo.getVideoSurfaceView());
                 ((VideoViewHolder) holder).mainVideo.setPlayer(player);
                 break;
         }

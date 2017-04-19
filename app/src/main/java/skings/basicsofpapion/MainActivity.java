@@ -1,5 +1,6 @@
 package skings.basicsofpapion;
 
+import android.content.res.TypedArray;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
@@ -33,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
         posts = new ArrayList<>();
 
         for(int i = 0; i < 20; i++){
-            if(i % 2 == 0){
+            if(i %2==0){
                 posts.add(new Post(0,"https://www.tarafdari.com/sites/default/files/styles/slider/public/contents/user22475/news/c9sn4txxgaarnvy.jpg?itok=Ma4LP9Jg"));
             }else {
 
@@ -50,11 +51,11 @@ public class MainActivity extends AppCompatActivity {
         posts_view.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
+//                super.onScrolled(recyclerView, dx, dy);
                 textView.setText(""+llm.findFirstCompletelyVisibleItemPosition());
 //                Log.i("salam",""+adapter.getItemViewType(llm.findFirstCompletelyVisibleItemPosition()));
                 newItem=llm.findFirstVisibleItemPosition();
-                if (oldItem!=newItem){
+                if (oldItem!=newItem && adapter.getItemViewType(newItem)==1){
                     Log.i("exoppp","releasing");
                     adapter.bindViewHolder(recyclerView.findViewHolderForAdapterPosition(newItem),newItem);
 //                    adapter.release();
@@ -70,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
                 clicked(v);
             }
         });
+
     }
 
     public void clicked(View view){
