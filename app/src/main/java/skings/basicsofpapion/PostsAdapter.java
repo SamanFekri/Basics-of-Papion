@@ -308,6 +308,11 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 }
                 player = ExoPlayerFactory.newSimpleInstance(view.getContext(),trackSelector,loadControl);
                 player.addListener((VideoViewHolder)holder);
+
+
+                //we can use this later to implement "mute"
+                player.setVolume(0f);
+
                 uri = post.getUri();
                 dataSourceFactory =
                 new DefaultDataSourceFactory(view.getContext(), bandwidthMeter,new DefaultHttpDataSourceFactory(userAgent, bandwidthMeter));
