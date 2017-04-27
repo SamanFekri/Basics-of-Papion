@@ -38,11 +38,11 @@ public class MainActivity extends AppCompatActivity {
                 posts.add(new Post(0,"https://www.tarafdari.com/sites/default/files/styles/slider/public/contents/user22475/news/c9sn4txxgaarnvy.jpg?itok=Ma4LP9Jg"));
             }else {
 
-                posts.add(new Post(1,"https://www.tarafdari.com/sites/default/files/contents/user160399/video/bastian-subbed.mp4"));
+                posts.add(new Post(1,"https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8"));
             }
         }
 
-        adapter = new PostsAdapter(posts);
+        adapter = new PostsAdapter(posts,this);
 
         posts_view.setAdapter(adapter);
         adapter.notifyDataSetChanged();

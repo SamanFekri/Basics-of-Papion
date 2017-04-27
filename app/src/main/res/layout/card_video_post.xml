@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
@@ -11,26 +12,45 @@
         android:layout_margin="5dp">
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:id="@+id/root">
 
             <com.google.android.exoplayer2.ui.SimpleExoPlayerView
                 android:id="@+id/video_post_view"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                fresco:surface_type="texture_view">
+                fresco:surface_type="texture_view"/>
 
-            </com.google.android.exoplayer2.ui.SimpleExoPlayerView>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#88000000"
+                android:orientation="vertical">
 
-            <!--<im.ene.toro.exoplayer2.ExoPlayerView-->
-                <!--android:id="@+id/video_post_view"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="200dp">-->
+                <TextView android:id="@+id/debug_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="4dp"
+                    android:paddingRight="4dp"
+                    android:textSize="10sp"
+                    tools:ignore="SmallSp"/>
 
-            <!--</im.ene.toro.exoplayer2.ExoPlayerView>-->
-            <!--<uk.co.jakelee.vidsta.VidstaPlayer-->
-                <!--android:id="@+id/video_post_view"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="200dp" />-->
+                <LinearLayout android:id="@+id/controls_root"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:visibility="gone">
+
+                    <Button android:id="@+id/retry_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/retry"
+                        android:visibility="gone"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
 
         </RelativeLayout>
     </android.support.v7.widget.CardView>
