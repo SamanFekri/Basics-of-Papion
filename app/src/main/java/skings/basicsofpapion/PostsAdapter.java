@@ -52,7 +52,6 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private List<Post> postsList;
     private Activity activity;
-    private int currentPlaying = -1;
     private String userAgent;
     private Handler mainHandler;
     private TrackSelectionHelper trackSelectionHelper;
@@ -63,7 +62,7 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private SimpleExoPlayer player;
     private Uri uri;
     private View view;
-    private boolean flag=false;
+    private boolean flag = false;
     private DataSource.Factory dataSourceFactory;
     private MediaSource videoSource;
     private TrackGroupArray lastSeenTrackGroupArray;
@@ -78,7 +77,7 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     }
 
-    public class VideoViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,PlaybackControlView.VisibilityListener, ExoPlayer.EventListener {
+    public class VideoViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, PlaybackControlView.VisibilityListener, ExoPlayer.EventListener {
         private View view;
         private SimpleExoPlayerView mainVideo;
 
@@ -86,7 +85,7 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         private TextView debugTextView;
         private Button retryButton;
 
-        private boolean needRetrySource=false;
+        private boolean needRetrySource = false;
 
 
         public VideoViewHolder(View view) {
@@ -116,10 +115,10 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             } else if (view.getParent() == debugRootView) {
                 MappingTrackSelector.MappedTrackInfo mappedTrackInfo = trackSelector.getCurrentMappedTrackInfo();
                 if (mappedTrackInfo != null) {
-                    Log.d("exoexoe",activity.toString());
-                    Log.d("exoexoe",((Button) view).getText().toString());
-                    Log.d("exoexoe",trackSelectionHelper.toString());
-                    Log.d("exoexoe",activity.toString());
+                    Log.d("exoexoe", activity.toString());
+                    Log.d("exoexoe", ((Button) view).getText().toString());
+                    Log.d("exoexoe", trackSelectionHelper.toString());
+                    Log.d("exoexoe", activity.toString());
                     trackSelectionHelper.showSelectionDialog(activity, ((Button) view).getText(),
                             trackSelector.getCurrentMappedTrackInfo(), (int) view.getTag());
                 }
@@ -127,7 +126,7 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
 
         private void updateButtonVisibilities() {
-            Log.d("exoexo","updating vis");
+            Log.d("exoexo", "updating vis");
             debugRootView.removeAllViews();
 
             retryButton.setVisibility(needRetrySource ? View.VISIBLE : View.GONE);
@@ -171,7 +170,7 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         @Override
         public void onVisibilityChange(int i) {
-            Log.d("exoexo","vis chnaged");
+            Log.d("exoexo", "vis chnaged");
             debugRootView.setVisibility(i);
         }
 
@@ -221,7 +220,6 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         public void onPositionDiscontinuity() {
 
 
-
         }
 
         @Override
@@ -236,7 +234,7 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     }
 
-    private void initializePlayer(){
+    private void initializePlayer() {
 
         mainHandler = new Handler();
         videoTrackSelectionFactory = new AdaptiveTrackSelection.Factory(bandwidthMeter);
@@ -257,29 +255,29 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     public PostsAdapter(List<Post> postsList, Activity activity) {
-        this.activity=activity;
+        this.activity = activity;
         this.postsList = postsList;
-       initializePlayer();
+        initializePlayer();
 
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = null;
-        switch (viewType){
+        switch (viewType) {
             case 0:
-                itemView =  LayoutInflater.from(parent.getContext())
+                itemView = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.card_image_post, parent, false);
                 return new ImageViewHolder(itemView);
             case 1:
-                itemView =  LayoutInflater.from(parent.getContext())
+                itemView = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.card_video_post, parent, false);
-                Log.i("creating",""+viewType);
+                Log.i("creating", "" + viewType);
                 return new VideoViewHolder(itemView);
             default:
-                itemView =  LayoutInflater.from(parent.getContext())
+                itemView = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.card_image_post, parent, false);
-                Log.i("creating",""+viewType);
+                Log.i("creating", "" + viewType);
                 return new ImageViewHolder(itemView);
         }
     }
@@ -292,22 +290,22 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         Post post = postsList.get(position);
-        Log.i("bindbind",""+position);
+        Log.i("bindbind", "" + position);
 
-        switch (post.getType()){
+        switch (post.getType()) {
             case 0:
                 ((ImageViewHolder) holder).mainImage.setImageURI(post.getUri());
                 break;
             case 1:
-                view=((VideoViewHolder)holder).getView();
+                view = ((VideoViewHolder) holder).getView();
 //                ((VideoViewHolder) holder).preparePlayer(post.getUri());
-                userAgent = Util.getUserAgent(view.getContext(),"Basic of papion");
+                userAgent = Util.getUserAgent(view.getContext(), "Basic of papion");
 
-                if (player!=null){
+                if (player != null) {
                     player.stop();
                 }
-                player = ExoPlayerFactory.newSimpleInstance(view.getContext(),trackSelector,loadControl);
-                player.addListener((VideoViewHolder)holder);
+                player = ExoPlayerFactory.newSimpleInstance(view.getContext(), trackSelector, loadControl);
+                player.addListener((VideoViewHolder) holder);
 
 
                 //we can use this later to implement "mute"
@@ -315,7 +313,7 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
                 uri = post.getUri();
                 dataSourceFactory =
-                new DefaultDataSourceFactory(view.getContext(), bandwidthMeter,new DefaultHttpDataSourceFactory(userAgent, bandwidthMeter));
+                        new DefaultDataSourceFactory(view.getContext(), bandwidthMeter, new DefaultHttpDataSourceFactory(userAgent, bandwidthMeter));
                 ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
 
                 videoSource = new HlsMediaSource(uri,
@@ -330,7 +328,7 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 player.prepare(loopingSource);
 
 
-                Log.i("surfacetex",""+((VideoViewHolder) holder).mainVideo.getVideoSurfaceView());
+                Log.i("surfacetex", "" + ((VideoViewHolder) holder).mainVideo.getVideoSurfaceView());
                 ((VideoViewHolder) holder).mainVideo.setPlayer(player);
 
                 break;
